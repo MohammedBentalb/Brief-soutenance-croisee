@@ -1,10 +1,211 @@
-*{
+@import url("https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap");
+* {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
+  font-family: "Poppins", sans-serif;
 }
 
-body{
-  background-color: #F3F7FA;
+body {
+  background-color: #f3f7fa;
 }
 
+.main {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  margin: auto;
+}
+
+.sidebar {
+  width: 100%;
+  min-width: 300px;
+  max-width: 350px;
+  min-height: 300px;
+  background-color: white;
+  border-radius: 0.5rem;
+}
+
+.office {
+  display: flex;
+  width: 100%;
+  justify-content: space-between;
+  min-height: 700px;
+  position: relative;
+  padding: 1.5rem;
+}
+
+.office-bg {
+  position: absolute;
+  inset: 1.5rem;
+  z-index: -1;
+}
+
+.office-bg > img {
+  width: 100%;
+  height: 100%;
+}
+
+.left-office {
+  height: 100%;
+  width: 38.7%;
+  padding: 0.95%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+.left-office > div:first-child {
+  width: 100%;
+  min-height: 200px;
+  height: 32%;
+}
+
+.left-office > div:last-child {
+  width: 100%;
+  min-height: 300px;
+  height: 66.2%;
+}
+
+.right-office {
+  width: 46%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: end;
+  padding: 0.95%;
+  gap: 0.5rem;
+}
+
+.right-office > div:first-child {
+  min-height: 208px;
+  height: 32%;
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+}
+
+.right-office > div:first-child > div {
+  width: 49%;
+  min-height: 208px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.right-office > div:last-child {
+  min-height: 202px;
+  height: 32%;
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+}
+
+.right-office > div:last-child > div {
+  width: 49%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.room-emp-add {
+  width: fit-content;
+  display: flex;
+  padding-inline: .9rem;
+  padding-block: .4rem;
+  border-radius: 5px;
+  background-color: #2196F3;
+  border: none;
+  color: whitesmoke;
+
+}
+
+.list-employee {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: .3rem;
+}
+
+
+.employee {
+  width: 100%;
+  max-width: 120px;
+  max-height: 80px;
+  background-color: whitesmoke;
+  border-radius: 10px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.1rem;
+  padding: .5rem 0.2rem;
+}
+
+.employee-name {
+  display: flex;
+  flex-direction: column;
+}
+.employee-name p {
+  font-size: 0.6rem;
+  font-weight: bold;
+  text-transform: capitalize;
+}
+
+.employee-name p:last-child{
+  color: rgb(156, 156, 156);
+}
+
+.avatar {
+  width: 2rem;
+  border-radius: 50%;
+}
+
+.avatar img {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+}
+
+.delete {
+  border: 2px solid red;
+  width: 1rem;
+  height: 1rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: red;
+  border-radius: 5px;
+}
+
+
+@media screen and (max-width: 15px) {
+  .right-office .list-employee{
+    display: block;
+  }
+  /* .right-office .list-employee li{
+    margin: auto;
+  } */
+}
+@media screen and (max-width: 920px) {
+  .main{
+    flex-direction: column;
+  }
+  .right-office, .left-office{
+    height: unset;
+  }
+
+  .right-office > div:last-child {
+    height: fit-content;
+  }
+}
+/*
+@media screen and (max-width: 1050px) {
+  .office-bg{
+    transform: rotate(90deg);
+  }
+} */
