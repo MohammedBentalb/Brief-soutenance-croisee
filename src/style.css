@@ -32,7 +32,7 @@ body {
   display: flex;
   width: 100%;
   justify-content: space-between;
-  max-height: 700px;
+  min-height: 800px;
   position: relative;
   padding: 1.5rem;
 }
