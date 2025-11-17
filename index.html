@@ -11,9 +11,7 @@
     <main class="main">
       <div class="sidebar" id="employee-sidebar">
         <h1 class="sidebar-title">Staff members (unassigned)</h1>
-        <div>
-          
-        </div>
+        <div></div>
         <ul class="unassigned-list">
           <li class="" draggable="true">
             <div class="avatar">
@@ -30,7 +28,6 @@
       </div>
 
       <div class="office" id="office">
-        <!-- THIS IS BACKGROND IMAGE -->
         <div class="office-bg">
           <img src="/assets/office.jpg" alt="office background image" />
         </div>
@@ -360,6 +357,88 @@
         </div>
       </div>
     </main>
+
+    <div class="form-modal is-hidden">
+      <form action="" class="add-edit-form">
+        <div class="field">
+          <label for="name-input">Name:</label>
+          <input type="text" id="name-input" />
+          <p class="error-name"></p>
+        </div>
+        <div class="field">
+          <label for="role">Role:</label>
+          <select name="role-input" id="">
+            <option value="recepton">Reception</option>
+            <option value="security">security</option>
+            <option value="manager">Manager</option>
+            <option value="nettoyage">Nettoyage</option>
+            <option value="other">other</option>
+          </select>
+          <p class="error-role"></p>
+        </div>
+        <div class="field">
+          <label for="name">Photo (URL):</label>
+          <input type="url" id="image-input" />
+          <p class="error-photo"></p>
+        </div>
+
+        <div class="field">
+          <div class="image-filed">
+            <img src="/assets/avatar.png" alt=" mohammed image" />
+          </div>
+        </div>
+
+        <div class="experience">
+          <label for="">Experiances:</label>
+          
+          <div class="filed-container" id="experience-1">
+            <div class="field">
+              <label for="exp-company-input">Company:</label>
+              <input type="company" id="exp-company-input" />
+              <p class="error-company-ex"></p>
+            </div>
+
+            <div class="field">
+              <label for="exp-role-input">Role:</label>
+              <input type="text" id="exp-role-input" />
+              <p class="error-company-ex"></p>
+            </div>
+
+            <div class="field">
+              <label for="exp-start-date-input">Start:</label>
+              <input type="text" id="exp-role-start-date" />
+              <p class="error-start-date-xp"></p>
+            </div>
+
+            <div class="field">
+              <label for="exp-end-date-input">End:</label>
+              <input type="text" id="exp-role-end-date" />
+              <p class="error-end-date-xp"></p>
+            </div>
+          </div>
+
+        </div>
+        <button class="add-exp">Add experience</button>
+
+        <div class="field">
+          <label for="email-input">Email:</label>
+          <input type="email" id="email-input" placeholder="Ex: mohammedbentalb0@gamail.com">
+          <p id="error-email"></p>
+        </div>
+        
+        <div class="field">
+          <label for="phone-input">Phone:</label>
+          <input type="text" id="phone-input"  placeholder="0700927188">
+          <p id="error-phone"></p>
+        </div>
+
+        <div class="action-buttons">
+          <button class="add-edit-worker" type="submit">Add worker</button>
+          <button class="cancel-add-edit" type="button">cancel</button>
+        </div>
+      </form>
+    </div>
+
     <script type="module" src="/src/main.ts"></script>
   </body>
 </html>

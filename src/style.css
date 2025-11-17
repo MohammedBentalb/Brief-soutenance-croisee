@@ -5,6 +5,8 @@
   box-sizing: border-box;
   font-family: "Poppins", sans-serif;
 }
+html {
+}
 
 body {
   background-color: #f3f7fa;
@@ -14,6 +16,7 @@ body {
   display: flex;
   justify-content: space-between;
   width: 100%;
+  height: max-content;
   margin: auto;
 }
 
@@ -21,7 +24,7 @@ body {
   width: 100%;
   min-width: 300px;
   max-width: 350px;
-  min-height: 300px;
+  height: fit-content;
   background-color: white;
   border-radius: 0.5rem;
   padding-inline: 0.5rem;
@@ -286,4 +289,123 @@ body {
   .office-bg {
     inset: 0;
   }
+}
+
+.form-modal {
+  background-color: rgba(0, 0, 0, 0.384);
+  backdrop-filter: blur(5px);
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: start;
+  justify-content: center;
+  padding-block: 4rem;
+  padding-inline: 1rem;
+  height: max-content;
+}
+
+.add-edit-form {
+  width: 600px;
+  background-color: white;
+  border-radius: 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  padding: 1.5rem;
+}
+
+.field {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.field input {
+  padding-inline: 0.2rem;
+}
+
+.field input,
+.field select {
+  height: 35px;
+  border-radius: 9px;
+  border: 2px solid rgba(175, 171, 171, 0.562);
+  font-weight: 500;
+}
+.field p {
+  color: red;
+}
+
+.add-edit-form label {
+  font-weight: 500;
+}
+
+.image-filed {
+  width: 8rem;
+  height: 8rem;
+  border: 2px dotted gray;
+  border-radius: 50%;
+}
+.image-filed > img {
+  width: 100%;
+  height: 100%;
+}
+
+.experience {
+  padding: 0.2rem;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.filed-container {
+  width: 100%;
+  padding: 0.5rem;
+  background-color: rgba(211, 210, 210, 0.425);
+  border-radius: 10px;
+  border: 2px solid rgba(211, 210, 210, 0.322);
+}
+
+.add-exp {
+  border: none;
+  padding-block: 0.7rem;
+  padding-inline: 0.8rem;
+  border-radius: 10px;
+  background-color: rgb(82, 190, 82);
+  text-transform: capitalize;
+  font-weight: 500;
+  color: white;
+  cursor: pointer;
+}
+.add-exp:hover {
+  opacity: 0.8;
+}
+
+.is-hidden {
+  display: none;
+}
+
+.action-buttons {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: end;
+  gap: 1.5rem;
+}
+
+.action-buttons button {
+  border: none;
+  padding-inline: 0.8rem;
+  padding-block: 0.6rem;
+  border-radius: 10px;
+  background-color: rgb(63, 63, 235);
+  text-transform: capitalize;
+  font-weight: 500;
+  color: white;
+  cursor: pointer;
+}
+.action-buttons button {
+  opacity: .7;
 }
