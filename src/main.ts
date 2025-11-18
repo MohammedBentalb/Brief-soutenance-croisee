@@ -16,6 +16,8 @@ const emailInput = document.querySelector<HTMLInputElement>("#email-input");
 const emailError = document.querySelector<HTMLParagraphElement>(".error-email");
 const phoneInput = document.querySelector<HTMLInputElement>("#phone-input");
 const phoneError = document.querySelector<HTMLParagraphElement>(".error-phone");
+const avatarImage = document.querySelector<HTMLMediaElement>("#avatar-image")
+
 // add experience button
 const addExperienceButton = document.querySelector(".add-exp-btn");
 
@@ -26,7 +28,7 @@ let experienceErrorArray: string[] | [] = [];
 let experienceFieldsCount = 1;
 
 // workersList
-let workers: workerType[] = JSON.parse(localStorage.getItem("worker") || "[]")
+let workers: workerType[] = JSON.parse(localStorage.getItem("workers") || "[]")
 console.log("these are my workers", workers)
 
 // show add formula when clicking on the add worker button on the sidebar
@@ -54,7 +56,9 @@ roleInput?.addEventListener("input", () => {
 // validating the worker image url in realtime
 imageInput?.addEventListener("input", () => {
     if (!imageError) return;
-    handleInputShowinfErrorAndValidation(imageInput, imageError);
+    const validationResult = handleInputShowinfErrorAndValidation(imageInput, imageError);
+
+    if (!validationResult && avatarImage) avatarImage.src = emailInput?.value.trim() as string
 });
 
 // validating the worker email in realtime
@@ -107,6 +111,7 @@ addExperienceButton?.addEventListener("click", () => {
     targetExperiences();
 });
 
+// function that runs cheks on the experience feilds since they require a seperate logic to handle all experiences validation at the same time
 function targetExperiences() {
     const experiences = document.querySelectorAll(".experience-field");
     experiences.forEach((experience) => {
@@ -159,6 +164,7 @@ function targetExperiences() {
     });
 }
 
+// listnner to the submit event that happens to the form, we check again if the inputs got all the details we need and then we proced with the submitting event
 addEditForm?.addEventListener("submit", function (e) {
     e.preventDefault();
     const experiencesArr = document.querySelectorAll(".experience-field");
@@ -237,4 +243,6 @@ addEditForm?.addEventListener("submit", function (e) {
     };
 
     workers = [...workers, worker]
+    localStorage.setItem("workers", JSON.stringify(workers))
+    addEditForm.reset()
 });

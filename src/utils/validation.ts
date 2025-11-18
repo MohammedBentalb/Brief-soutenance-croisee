@@ -1,8 +1,6 @@
 import type { validatingInputValueType } from "../types";
 
-export const validatingInputValue = (
-  element: validatingInputValueType
-): string => {
+export const validatingInputValue = (element: validatingInputValueType): string => {
   if (!element.value.trim()) return "Invalid Value";
 
   if (element.type == "email") {
@@ -13,12 +11,14 @@ export const validatingInputValue = (
 
   if (element.id == "phone-input") {
     // test phone with regex
-    if (
-      !isNaN(Number(element.value.trim())) &&
-      element.value.trim().length === 10
-    )
-      return "";
+    if (!isNaN(Number(element.value.trim())) && element.value.trim().length === 10) return "";
     return "Invalid phone format";
+  }
+
+  if (element.id == "image-input") {
+    const imageRegex = /^https?:\/\/[^\s/$.?#].[^\s]*\.(?:jpe?g|png|gif|webp|svg|bmp|tiff|avif)(?:\?[^\s#]*)?(?:#\S*)?$/i;
+    if (!imageRegex.test(element.value.trim())) return "invalid URL";
+    return "";
   }
 
   return "";
@@ -36,16 +36,6 @@ export const showError = (errorField: HTMLParagraphElement, mssg: string) => {
     input.style.outlineColor = "black";
     input.style.borderColor = "black";
   }
-};
-
-export const validatingImages = (element: validatingInputValueType) => {
-  const imageRegex =
-    /^https?:\/\/[^\s/$.?#].[^\s]*\.(?:jpe?g|png|gif|webp|svg|bmp|tiff|avif)(?:\?[^\s#]*)?(?:#\S*)?$/i;
-  // const imageRegex = /\.(?:jpe?g|png|gif|webp|svg|bmp|tiff|avif)(?:\?.*)?$/i;
-  if (!imageRegex.test(element.value.trim())) {
-    return "invalid URL";
-  }
-  return "";
 };
 
 export function validatingDates(dateInp1: HTMLDataElement, dateInp2: HTMLDataElement): string[] {
