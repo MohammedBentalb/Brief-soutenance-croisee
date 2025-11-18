@@ -5,8 +5,6 @@
   box-sizing: border-box;
   font-family: "Poppins", sans-serif;
 }
-html {
-}
 
 body {
   background-color: #f3f7fa;
@@ -368,7 +366,7 @@ body {
   border: 2px solid rgba(211, 210, 210, 0.322);
 }
 
-.add-exp {
+.add-exp-btn {
   border: none;
   padding-block: 0.7rem;
   padding-inline: 0.8rem;
@@ -379,7 +377,7 @@ body {
   color: white;
   cursor: pointer;
 }
-.add-exp:hover {
+.add-exp-btn:hover {
   opacity: 0.8;
 }
 
@@ -408,4 +406,11 @@ body {
 }
 .action-buttons button {
   opacity: .7;
+}
+
+.add-experience-container{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: .5rem;
 }
