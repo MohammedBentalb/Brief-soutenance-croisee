@@ -60,8 +60,7 @@ roleInput?.addEventListener("input", () => {
 imageInput?.addEventListener("input", () => {
     if (!imageError) return;
     const validationResult = handleInputShowinfErrorAndValidation(imageInput, imageError);
-
-    if (!validationResult && avatarImage) avatarImage.src = emailInput?.value.trim() as string
+    if (!validationResult && avatarImage) avatarImage.src = imageInput?.value.trim() as string
 });
 
 // validating the worker email in realtime

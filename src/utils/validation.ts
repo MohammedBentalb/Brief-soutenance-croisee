@@ -4,9 +4,9 @@ export const validatingInputValue = (element: validatingInputValueType): string 
   if (!element.value.trim()) return "Invalid Value";
 
   if (element.type == "email") {
-    // test email with regex
-    if (true) return "";
-    return "Invalid email format";
+    let emailRegex = /^[A-Za-z0-9._%+-]+@[A-Za-z0-9](?:[A-Za-z0-9-]{0,61}[A-Za-z0-9])?(?:\.[A-Za-z0-9](?:[A-Za-z0-9-]{0,61}[A-Za-z0-9])?)+$/
+    if (!emailRegex.test(element.value.trim())) return "Invalid email format";
+    return "";
   }
 
   if (element.id == "phone-input") {
@@ -16,7 +16,7 @@ export const validatingInputValue = (element: validatingInputValueType): string 
   }
 
   if (element.id == "image-input") {
-    const imageRegex = /^https?:\/\/[^\s/$.?#].[^\s]*\.(?:jpe?g|png|gif|webp|svg|bmp|tiff|avif)(?:\?[^\s#]*)?(?:#\S*)?$/i;
+    const imageRegex = /^https?:\/\/(?:[A-Za-z0-9](?:[A-Za-z0-9-]{0,61}[A-Za-z0-9])?\.)+[A-Za-z]{2,63}(?::\d{1,5})?(?:\/[^\s]*)?$/
     if (!imageRegex.test(element.value.trim())) return "invalid URL";
     return "";
   }
