@@ -23,7 +23,8 @@ const addExperienceButton = document.querySelector(".add-exp-btn");
 const addEditForm = document.querySelector<HTMLFormElement>(".add-edit-form");
 // list of unassigned workers
 const unassignedList = document.querySelector(".unassigned-list")
-
+// info modal
+const infoModal = document.querySelector(".info-modal")
 
 
 
@@ -32,6 +33,7 @@ let experienceFieldsCount = 1;
 
 // workersList
 let workers: workerType[] = JSON.parse(localStorage.getItem("workers") || "[]")
+
 console.log("these are my workers", workers)
 
 // show add formula when clicking on the add worker button on the sidebar
@@ -108,6 +110,8 @@ addExperienceButton?.addEventListener("click", () => {
                 <p class="error-end-date-ex"></p>
             </div>
     `;
+
+
     experienceFieldsCount++;
     experienceContainer?.appendChild(div);
     targetExperiences();
@@ -246,19 +250,21 @@ addEditForm?.addEventListener("submit", function (e) {
 
     workers = [...workers, worker]
     localStorage.setItem("workers", JSON.stringify(workers))
-    
+
     addEditForm.reset()
     renderUnassignedWorkers()
 });
 
 
-function renderUnassignedWorkers(){
-    if(!unassignedList) return
+function renderUnassignedWorkers() {
+    if (!unassignedList) return
     unassignedList.innerHTML = ""
-
     workers.forEach(w => {
-    unassignedList.innerHTML += `
-        <li class="" draggable="true" id=$"${w.id}">
+        const li = document.createElement("li")
+        li.draggable = true
+        li.id = w.id.toString()
+        li.onclick = showModalInfo
+        li.innerHTML += `    
             <div class="avatar">
               <img src="/assets/avatar.png" alt="avatar" />
             </div>
@@ -267,11 +273,67 @@ function renderUnassignedWorkers(){
               <p>${w.role}</p>
             </div>
             <button class="edite" id="worker-${w.id}" >edit</button>
-        </li>
-    `    
+         `
+        unassignedList.appendChild(li)
     })
 
 }
 
-
 renderUnassignedWorkers()
+
+function showModalInfo(e: Event) {
+    console.log(infoModal)
+    if (!infoModal) return
+    infoModal.innerHTML = ""
+
+    const card = e.currentTarget as HTMLLIElement
+    const [foundWorker] = workers.filter(w => w.id === Number(card.id))
+
+
+    const personalDetails = document.createElement("div")
+    personalDetails.classList.add("info-modal-container")
+    personalDetails.innerHTML = `
+        <div class="main-info-field">
+        <div class="image-field">
+        <img src="${foundWorker.image}" alt="${foundWorker.name.split(" ")[0]} image" id="${foundWorker.name}-image-${foundWorker.id}"/>
+        </div>
+        <div>
+        <p>${foundWorker.name.split(" ")[0]}</p>
+        <p>${foundWorker.role}</p>
+        </div>
+        </div>
+        
+        <hr />
+        
+        <div class="personal-info">
+        <p class="info-line"><span>Email:</span> ${foundWorker.email}</p>
+        <p class="info-line"><span>Phone:</span> ${foundWorker.phone}</p>
+        <p class="info-line"><span>current location:</span> servers room</p>
+        </div>
+        
+        <h3>work experience</h3>`
+    const experienceDiv = document.createElement("div")
+    experienceDiv.classList.add("experience-col")
+
+    foundWorker.experiences.forEach(e => {
+        experienceDiv.innerHTML += `
+            <div class="experience-row">
+                <h4>${e.company}</h4>
+                <p class="info-line"><span>role: </span> ${e.role}</p>
+                <p class="info-line"><span>period: </span> ${e.start.replace("-", "/")} - ${e.end.replace("-", "/")}</p>
+          </div>
+        `
+    })
+
+    const closeButton = document.createElement("button")
+    closeButton.classList.add("btn", "green")
+    closeButton.textContent = "Cancel"
+
+
+    infoModal.appendChild(personalDetails)
+    personalDetails.appendChild(experienceDiv)
+    personalDetails.appendChild(closeButton)
+
+    closeButton.addEventListener("click", () => infoModal.classList.add("is-hidden"))
+    infoModal.classList.remove("is-hidden")
+}

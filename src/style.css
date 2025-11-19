@@ -195,19 +195,22 @@ body {
   font-size: 1.3rem;
   color: rgb(78, 78, 78);
   text-align: center;
+  margin-bottom: 1rem;
 }
 
 .unassigned-list {
+  width: 100%;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 0.5rem;
+  gap: 1rem;
   list-style-type: none;
   text-transform: capitalize;
-  margin-top: 0.7rem;
+  margin-top: .7rem;
 }
 .unassigned-list li {
   width: 100%;
+  max-width: 300px;
   display: flex;
   background-color: #f3f7fa;
   align-items: center;
@@ -215,6 +218,11 @@ body {
   padding-inline: 1rem;
   padding-block: 0.5rem;
   border-radius: 10px;
+  cursor: pointer;
+}
+.unassigned-list li {
+  border: 2px solid black;
+  scale: 1.1;
 }
 
 .unassigned-list li > div > p {
@@ -280,9 +288,12 @@ body {
     width: 100%;
   }
 
-  .unassigned-list li {
+
+  .unassigned-list{
     width: fit-content;
+    margin: auto;
   }
+
   .office {
     padding: 0;
   }
@@ -346,13 +357,13 @@ body {
   font-weight: 500;
 }
 
-.image-filed {
+.image-field{
   width: 8rem;
   height: 8rem;
   border: 2px dotted gray;
   border-radius: 50%;
 }
-.image-filed > img {
+.image-field > img {
   width: 100%;
   height: 100%;
 }
@@ -373,18 +384,21 @@ body {
   border: 2px solid rgba(211, 210, 210, 0.322);
 }
 
-.add-exp-btn {
+.green{
+  background-color: rgb(82, 190, 82);
+}
+
+.btn {
   border: none;
   padding-block: 0.7rem;
   padding-inline: 0.8rem;
   border-radius: 10px;
-  background-color: rgb(82, 190, 82);
   text-transform: capitalize;
   font-weight: 500;
   color: white;
   cursor: pointer;
 }
-.add-exp-btn:hover {
+.btn:hover {
   opacity: 0.8;
 }
 
@@ -399,6 +413,10 @@ body {
   justify-content: end;
   gap: 1.5rem;
 }
+.add-exp-btn {
+  margin: unset;
+  margin-right: auto;
+}
 
 .action-buttons button {
   border: none;
@@ -411,7 +429,7 @@ body {
   color: white;
   cursor: pointer;
 }
-.action-buttons button {
+.action-buttons button:hover{
   opacity: 0.7;
 }
 
@@ -478,6 +496,7 @@ hr {
   height: 2px;
   margin-top: -5px;
 }
+
 .personal-info {
   width: 100%;
   display: flex;
@@ -497,6 +516,7 @@ hr {
   width: 100%;
   text-transform: capitalize;
 }
+
 .experience-col {
   width: 100%;
   display: flex;
