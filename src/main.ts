@@ -17,12 +17,15 @@ const emailError = document.querySelector<HTMLParagraphElement>(".error-email");
 const phoneInput = document.querySelector<HTMLInputElement>("#phone-input");
 const phoneError = document.querySelector<HTMLParagraphElement>(".error-phone");
 const avatarImage = document.querySelector<HTMLMediaElement>("#avatar-image")
-
 // add experience button
 const addExperienceButton = document.querySelector(".add-exp-btn");
-
 // add workers form
 const addEditForm = document.querySelector<HTMLFormElement>(".add-edit-form");
+// list of unassigned workers
+const unassignedList = document.querySelector(".unassigned-list")
+
+
+
 
 let experienceErrorArray: string[] | [] = [];
 let experienceFieldsCount = 1;
@@ -244,5 +247,32 @@ addEditForm?.addEventListener("submit", function (e) {
 
     workers = [...workers, worker]
     localStorage.setItem("workers", JSON.stringify(workers))
+    
     addEditForm.reset()
+    renderUnassignedWorkers()
 });
+
+
+function renderUnassignedWorkers(){
+    if(!unassignedList) return
+    unassignedList.innerHTML = ""
+
+    workers.forEach(w => {
+    unassignedList.innerHTML += `
+        <li class="" draggable="true" id=$"${w.id}">
+            <div class="avatar">
+              <img src="/assets/avatar.png" alt="avatar" />
+            </div>
+            <div class="employee-name">
+              <p>${w.name.split(" ")[0]}</p>
+              <p>${w.role}</p>
+            </div>
+            <button class="edite" id="worker-${w.id}" >edit</button>
+        </li>
+    `    
+    })
+
+}
+
+
+renderUnassignedWorkers()
