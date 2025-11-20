@@ -28,12 +28,12 @@ export type allWorkersPlaceType = {
 }
 
 export type zonesType = {
-    conference: ["reception", "it", "security", "manager", "nettoyage", "auther"],
+    conference: ["reception", "it", "security", "manager", "nettoyage", "other"],
     reception: ["reception", "manager"],
     servers: ["it", "manager"],
     security: ["security", "manager"],
-    staff: ["reception", "it", "security", "manager", "nettoyage", "auther"],
-    vault: ["reception", "it", "security", "manager", "auther"],
+    staff: ["reception", "it", "security", "manager", "nettoyage", "other"],
+    vault: ["reception", "it", "security", "manager", "other"],
 }
 
 export type roomType = keyof zonesType

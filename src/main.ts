@@ -55,12 +55,12 @@ let allWorkersPlace: allWorkersPlaceType = JSON.parse(localStorage.getItem("allW
 let workersCount = JSON.parse(localStorage.getItem("workersCount") || "null") || 0
 
 let zones: zonesType = {
-    conference: ["reception", "it", "security", "manager", "nettoyage", "auther"],
+    conference: ["reception", "it", "security", "manager", "nettoyage", "other"],
     reception: ["reception", "manager"],
     servers: ["it", "manager"],
     security: ["security", "manager"],
-    staff: ["reception", "it", "security", "manager", "nettoyage", "auther"],
-    vault: ["reception", "it", "security", "manager", "auther"],
+    staff: ["reception", "it", "security", "manager", "nettoyage", "other"],
+    vault: ["reception", "it", "security", "manager", "other"],
 }
 
 console.log("these are my workers", allWorkersPlace)
