@@ -20,6 +20,10 @@ const phoneError = document.querySelector<HTMLParagraphElement>(".error-phone");
 const avatarImage = document.querySelector<HTMLMediaElement>("#avatar-image")
 // add experience button
 const addExperienceButton = document.querySelector(".add-exp-btn");
+
+// experiences container
+const experienceContainer = document.querySelector(".add-experience-container");
+
 // add workers form
 const addEditForm = document.querySelector<HTMLFormElement>(".add-edit-form");
 // list of unassigned workers
@@ -99,9 +103,6 @@ phoneInput?.addEventListener("input", () => {
 });
 
 addExperienceButton?.addEventListener("click", () => {
-    const experienceContainer = document.querySelector(
-        ".add-experience-container"
-    );
     const div = document.createElement("div");
     div.classList.add("filed-container", "experience-field");
     div.innerHTML = `
@@ -260,7 +261,12 @@ addEditForm?.addEventListener("submit", function (e) {
     localStorage.setItem("allWorkersPlace", JSON.stringify(allWorkersPlace))
     localStorage.setItem("workersCount", JSON.stringify(workersCount))
 
+    experienceFieldsCount = 1
+    if (experienceContainer) experienceContainer.innerHTML = ""
+    if(avatarImage) avatarImage.src = "/assets/avatar.png"
     addEditForm.reset()
+    formModal?.classList.add("is-hidden")
+    
     renderUnassignedWorkers()
 });
 
