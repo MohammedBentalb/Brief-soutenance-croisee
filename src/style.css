@@ -188,6 +188,9 @@ body {
 .avatar {
   width: 2rem;
   border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .avatar img {
@@ -635,6 +638,10 @@ hr {
   border: 2px solid rgba(255, 0, 0, 0.596);
   box-shadow: 1px 1px 10px rgba(255, 0, 0, 0.493);
 }
+.good {
+  border: 2px solid rgba(23, 201, 62, 0.699);
+  box-shadow: 1px 1px 10px rgba(23, 201, 62, 0.699);
+}
 
 .toast {
   background-color: white;
@@ -642,7 +649,7 @@ hr {
   right: 2rem;
   top: 2rem;
   width: fit-content;
-  padding-block: 0.2rem;
+  padding-block: 0.5rem;
   padding-inline: 1.2rem;
   border-radius: 10px;
   display: flex;
@@ -655,12 +662,35 @@ hr {
   font-size: 1.2rem;
   color: red;
 }
+.toast p {
+  color: red;
+}
 .toast > div:first-child p {
   font-size: 0.9rem;
+}
+.toast > div:first-child p::first-letter {
+  text-transform: uppercase;
+}
+
+.toast.good > div:first-child h2 {
+  color: rgba(23, 201, 62, 0.699);
+}
+.toast.good > div:first-child p {
+  color: rgba(11, 117, 34, 0.973);
 }
 
 .toast.danger > div:last-child:hover {
   background-color: rgba(255, 0, 0, 0.637);
+}
+.toast.good > div:last-child:hover {
+  background-color: rgba(23, 201, 62, 0.699);
+}
+.toast.danger > div:last-child:hover {
+  color: white;
+}
+
+.toast.good > div:last-child:hover {
+  background-color: rgba(23, 201, 62, 0.699);
   color: white;
 }
 

@@ -1,4 +1,5 @@
 import type { allWorkersPlaceType, experienceType, roomType, zonesType } from "./types";
+import { showToaster } from "./utils/toaster";
 import { handleDatesInputInfShowErrorAndValidation, handleExperienceShowinfErrorAndValidation, handleInputShowinfErrorAndValidation } from "./utils/validation";
 
 const addWorkerButoon = document.querySelector<HTMLButtonElement>(".add-worker");
@@ -30,6 +31,9 @@ const infoModal = document.querySelector(".info-modal")
 const addWorkerTozoneButtons = document.querySelectorAll<HTMLButtonElement>('.room-emp-add')
 // modal that shows unassigned workers to assigne a room to them
 const showAnassignedToAssignModal = document.querySelector<HTMLDivElement>(".unassigned-list-container")
+// rooms
+const rooms = document.querySelectorAll<HTMLDivElement>("div[data-room")
+
 
 let experienceErrorArray: string[] | [] = [];
 let experienceFieldsCount = 1;
@@ -248,7 +252,7 @@ addEditForm?.addEventListener("submit", function (e) {
         email: emailInput.value.trim(),
         phone: Number(phoneInput.value.trim()),
         image: imageInput.value.trim(),
-        role: roleInput.value.trim(),
+        role: roleInput.value.trim() as keyof allWorkersPlaceType,
         experiences: experienceArray
     };
 
@@ -280,8 +284,8 @@ function renderUnassignedWorkers() {
             <button class="edite" id="worker-${w.id}" >edit</button>
          `
         unassignedList.appendChild(li)
+        dragEventStart(li)
     })
-
 }
 
 function showModalInfo(e: Event) {
@@ -378,9 +382,8 @@ function AssignWorkerToRoom(role: keyof allWorkersPlaceType, id: number, room: r
     if (!listofWorkers) return
     let shouldGo = false
 
-    zones[room].forEach(z => {
-        if (z === role) shouldGo = true
-    })
+    zones[room].forEach(z => { if (z === role) shouldGo = true })
+
     if (!shouldGo) {
         showToaster(true, `${role} can't go there`)
         showAnassignedToAssignModal?.classList.add("is-hidden")
@@ -393,6 +396,7 @@ function AssignWorkerToRoom(role: keyof allWorkersPlaceType, id: number, room: r
     renderAllWorkersInsideRooms()
     renderUnassignedWorkers()
     scanRoomState()
+    showToaster(false)
     showAnassignedToAssignModal?.classList.add("is-hidden")
 }
 
@@ -407,14 +411,14 @@ function renderAllWorkersInsideRooms() {
         const key = room.dataset.room as roomType
 
         allWorkersPlace[key].forEach(w => {
-            console.log(w, room.dataset.room)
+            console.log(allWorkersPlace[key])
             const worker = document.createElement("li")
             const button = document.createElement("button")
 
             button.classList.add("delete")
             button.style.cursor = "pointer"
             button.textContent = "x"
-            button.onclick = removeWorkerFromRoom.bind(null, w.id, key)
+            button.onclick = removeWorkerFromRoom.bind(null, Number(w.id), key)
             button.role = "delete"
 
             worker.onclick = showModalInfo
@@ -433,11 +437,14 @@ function renderAllWorkersInsideRooms() {
             `
             worker.appendChild(button)
             list.appendChild(worker)
+            dragEventStart(worker)
         })
     })
 }
 
 function removeWorkerFromRoom(id: number, room: roomType) {
+    console.log(id)
+    console.log(room)
     const [foundWorker] = allWorkersPlace[room].filter(w => w.id === Number(id))
     allWorkersPlace["unassigned"] = [...allWorkersPlace["unassigned"], foundWorker]
     allWorkersPlace[room] = allWorkersPlace[room].filter(w => w.id !== Number(id))
@@ -447,27 +454,58 @@ function removeWorkerFromRoom(id: number, room: roomType) {
     scanRoomState()
 }
 
-function showToaster(bad: boolean, msg: string = "") {
-    const toaster = bad ? document.querySelector(".toast.danger") : document.querySelector(".toast.good")
-    if (!toaster) return
-    
-    if (msg) toaster.querySelector("p")!.textContent = msg
-    
-    toaster.classList.add("is-hidden")
-    toaster.classList.remove("is-hidden")
-    setTimeout(() => toaster.classList.add("is-hidden"), 3000);
-}
-
 function scanRoomState() {
-    const rooms = document.querySelectorAll<HTMLDivElement>("div[data-room")
     if (!rooms) return
     rooms.forEach(room => {
         const key = room.dataset.room as roomType
-        if(key !== "servers" && key !== 'security' && key !== "reception") room.classList.toggle('room', allWorkersPlace[key].length === 0)
+        if (key !== "conference" && key !== 'staff') room.classList.toggle('room', allWorkersPlace[key].length === 0)
     })
-    
 }
 
+rooms.forEach(roomZone => {
+    roomZone.addEventListener("dragover", (e) => e.preventDefault())
+
+    roomZone.addEventListener("drop", (e) => {
+        if (!e.dataTransfer) return
+        const id = JSON.parse(e.dataTransfer.getData("id"))
+        const role = JSON.parse(e.dataTransfer.getData("role"))
+        const place = JSON.parse(e.dataTransfer.getData("place")) as roomType
+        const roomKey = roomZone.dataset.room as roomType
+
+        let replace = false
+
+        if (place === roomKey) return
+        zones[roomKey].forEach(z => { if (z === role) replace = true })
+
+        if (!replace) {
+            showToaster(true, `${role} can't go there`)
+            return
+        }
+
+        const [foundUser] = allWorkersPlace[place].filter(f => f.id === Number(id))
+        allWorkersPlace[place] = allWorkersPlace[place].filter(f => f.id !== Number(id))
+        allWorkersPlace[roomKey] = [...allWorkersPlace[roomKey], foundUser]
+        localStorage.setItem("allWorkersPlace", JSON.stringify(allWorkersPlace))
+
+        renderAllWorkersInsideRooms()
+        renderUnassignedWorkers()
+        scanRoomState()
+        showToaster(false)
+    })
+})
+
+function dragEventStart(card: HTMLLIElement) {
+    if (!card) return
+    card.addEventListener("dragstart", e => {
+
+        const key = card.dataset.place as roomType
+
+        const [foundUser] = allWorkersPlace[key].filter(w => w.id === Number(card.id))
+        e.dataTransfer?.setData("id", JSON.stringify(foundUser.id))
+        e.dataTransfer?.setData("role", JSON.stringify(foundUser.role))
+        e.dataTransfer?.setData("place", JSON.stringify(key))
+    })
+}
 
 // function that calls functions that need to be called directly on the root
 function AppCaller() {
@@ -477,3 +515,6 @@ function AppCaller() {
     scanRoomState()
 }
 AppCaller()
+
+
+/// limit the zones to spesic number of workers 

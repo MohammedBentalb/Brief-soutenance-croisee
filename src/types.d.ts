@@ -10,7 +10,7 @@ export type experienceType = {
 export type workerType = {
     id: number,
     name: string,
-    role: string,
+    role: keyof allWorkersPlaceType,
     image: string,
     email: string,
     phone: number,
