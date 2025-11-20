@@ -25,9 +25,7 @@ export const validatingInputValue = (element: validatingInputValueType): string 
 };
 
 export const showError = (errorField: HTMLParagraphElement, mssg: string) => {
-  const input = errorField.previousElementSibling as
-    | HTMLInputElement
-    | HTMLSelectElement;
+  const input = errorField.previousElementSibling as | HTMLInputElement| HTMLSelectElement;
   errorField.textContent = mssg;
   input.style.outlineColor = "red";
   input.style.borderColor = "red";

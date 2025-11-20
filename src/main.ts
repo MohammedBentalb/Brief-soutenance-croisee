@@ -1,4 +1,4 @@
-import type { experienceType, workerType } from "./types";
+import type { allWorkersPlaceType, experienceType, roomType, zonesType } from "./types";
 import { handleDatesInputInfShowErrorAndValidation, handleExperienceShowinfErrorAndValidation, handleInputShowinfErrorAndValidation } from "./utils/validation";
 
 const addWorkerButoon = document.querySelector<HTMLButtonElement>(".add-worker");
@@ -26,25 +26,42 @@ const unassignedList = document.querySelector(".unassigned-list")
 // info modal
 const infoModal = document.querySelector(".info-modal")
 
-
+// the add button inside each room
+const addWorkerTozoneButtons = document.querySelectorAll<HTMLButtonElement>('.room-emp-add')
+// modal that shows unassigned workers to assigne a room to them
+const showAnassignedToAssignModal = document.querySelector<HTMLDivElement>(".unassigned-list-container")
 
 let experienceErrorArray: string[] | [] = [];
 let experienceFieldsCount = 1;
 
 // workersList
-let workers: workerType[] = JSON.parse(localStorage.getItem("workers") || "[]")
+let allWorkersPlace: allWorkersPlaceType = JSON.parse(localStorage.getItem("allWorkersPlace") || "null") || {
+    unassigned: [],
+    servers: [],
+    staff: [],
+    conference: [],
+    security: [],
+    vault: [],
+    reception: [],
+}
+let workersCount = JSON.parse(localStorage.getItem("workersCount") || "null") || 0
 
-console.log("these are my workers", workers)
+let zones: zonesType = {
+    conference: ["reception", "it", "security", "manager", "nettoyage", "auther"],
+    reception: ["reception", "manager"],
+    servers: ["it", "manager"],
+    security: ["security", "manager"],
+    staff: ["reception", "it", "security", "manager", "nettoyage", "auther"],
+    vault: ["reception", "it", "security", "manager", "auther"],
+}
+
+console.log("these are my workers", allWorkersPlace)
 
 // show add formula when clicking on the add worker button on the sidebar
-addWorkerButoon?.addEventListener("click", () =>
-    formModal?.classList.remove("is-hidden")
-);
+addWorkerButoon?.addEventListener("click", () => formModal?.classList.remove("is-hidden"));
 
 // show add formula when clicking on the add worker button on the sidebar
-hideFormModal?.addEventListener("click", () =>
-    formModal?.classList.add("is-hidden")
-);
+hideFormModal?.addEventListener("click", () => formModal?.classList.add("is-hidden"));
 
 // validating the worker name in realtime
 nameInput?.addEventListener("input", () => {
@@ -76,8 +93,6 @@ phoneInput?.addEventListener("input", () => {
     if (!phoneError) return;
     handleInputShowinfErrorAndValidation(phoneInput, phoneError);
 });
-
-targetExperiences();
 
 addExperienceButton?.addEventListener("click", () => {
     const experienceContainer = document.querySelector(
@@ -116,7 +131,6 @@ addExperienceButton?.addEventListener("click", () => {
     experienceContainer?.appendChild(div);
     targetExperiences();
 });
-
 // function that runs cheks on the experience feilds since they require a seperate logic to handle all experiences validation at the same time
 function targetExperiences() {
     const experiences = document.querySelectorAll(".experience-field");
@@ -169,7 +183,6 @@ function targetExperiences() {
         });
     });
 }
-
 // listnner to the submit event that happens to the form, we check again if the inputs got all the details we need and then we proced with the submitting event
 addEditForm?.addEventListener("submit", function (e) {
     e.preventDefault();
@@ -219,12 +232,6 @@ addEditForm?.addEventListener("submit", function (e) {
             console.log("experience Array is here")
             experienceArray = [...experienceArray, { id: experienceArray.length, company: experienceCompanyInput.value.trim(), role: experienceRoleInput.value.trim(), start: experienceStartInput.value.trim(), end: experienceEndInput.value.trim() }]
         }
-        console.log("below experience Array is here")
-        console.log(experienceErrorArray.length)
-        console.log(!experienceCompanyValidation)
-        console.log(!experienceRoleValidation)
-        console.log(!startingDateValidation)
-        console.log(!endDateValidationn)
     });
 
     if (experienceErrorArray.length > 0) {
@@ -233,13 +240,10 @@ addEditForm?.addEventListener("submit", function (e) {
         return;
     }
 
-    if (experienceCompanyValidation || experienceRoleValidation || startingDateValidation || endDateValidationn) {
-        console.log("la rah maymkench a si simo");
-        return;
-    }
+    if (experienceCompanyValidation || experienceRoleValidation || startingDateValidation || endDateValidationn) return;
 
     let worker = {
-        id: workers.length,
+        id: workersCount++,
         name: nameInput.value.trim(),
         email: emailInput.value.trim(),
         phone: Number(phoneInput.value.trim()),
@@ -248,25 +252,26 @@ addEditForm?.addEventListener("submit", function (e) {
         experiences: experienceArray
     };
 
-    workers = [...workers, worker]
-    localStorage.setItem("workers", JSON.stringify(workers))
+    allWorkersPlace["unassigned"] = [...allWorkersPlace["unassigned"], worker]
+    localStorage.setItem("allWorkersPlace", JSON.stringify(allWorkersPlace))
+    localStorage.setItem("workersCount", JSON.stringify(workersCount))
 
     addEditForm.reset()
     renderUnassignedWorkers()
 });
 
-
 function renderUnassignedWorkers() {
     if (!unassignedList) return
     unassignedList.innerHTML = ""
-    workers.forEach(w => {
+    allWorkersPlace["unassigned"].forEach(w => {
         const li = document.createElement("li")
         li.draggable = true
         li.id = w.id.toString()
         li.onclick = showModalInfo
+        li.setAttribute("data-place", "unassigned")
         li.innerHTML += `    
             <div class="avatar">
-              <img src="/assets/avatar.png" alt="avatar" />
+              <img src="${w.image}" alt="avatar" />
             </div>
             <div class="employee-name">
               <p>${w.name.split(" ")[0]}</p>
@@ -279,39 +284,39 @@ function renderUnassignedWorkers() {
 
 }
 
-renderUnassignedWorkers()
-
 function showModalInfo(e: Event) {
     console.log(infoModal)
     if (!infoModal) return
     infoModal.innerHTML = ""
+    if ((e.target as HTMLButtonElement).role === "delete") return
 
     const card = e.currentTarget as HTMLLIElement
-    const [foundWorker] = workers.filter(w => w.id === Number(card.id))
+    const [foundWorker] = allWorkersPlace[card.dataset.place as roomType].filter(w => w.id === Number(card.id))
 
-
+    console.log(foundWorker)
     const personalDetails = document.createElement("div")
     personalDetails.classList.add("info-modal-container")
     personalDetails.innerHTML = `
-        <div class="main-info-field">
-        <div class="image-field">
-        <img src="${foundWorker.image}" alt="${foundWorker.name.split(" ")[0]} image" id="${foundWorker.name}-image-${foundWorker.id}"/>
-        </div>
-        <div>
-        <p>${foundWorker.name.split(" ")[0]}</p>
-        <p>${foundWorker.role}</p>
-        </div>
-        </div>
-        
-        <hr />
-        
-        <div class="personal-info">
-        <p class="info-line"><span>Email:</span> ${foundWorker.email}</p>
-        <p class="info-line"><span>Phone:</span> ${foundWorker.phone}</p>
-        <p class="info-line"><span>current location:</span> servers room</p>
-        </div>
-        
-        <h3>work experience</h3>`
+            <div class="main-info-field">
+                <div class="image-field">
+                    <img src="${foundWorker.image}" alt="${foundWorker.name.split(" ")[0]} image" id="${foundWorker.name}-image-${foundWorker.id}"/>
+                </div>
+            <div>
+            <p>${foundWorker.name.split(" ")[0]}</p>
+            <p>${foundWorker.role}</p>
+            </div>
+            </div>
+            
+            <hr />
+            
+            <div class="personal-info">
+            <p class="info-line"><span>Email:</span> ${foundWorker.email}</p>
+            <p class="info-line"><span>Phone:</span> ${foundWorker.phone}</p>
+            <p class="info-line"><span>current location:</span> servers room</p>
+            </div>
+            
+            <h3>work experience</h3>
+        `
     const experienceDiv = document.createElement("div")
     experienceDiv.classList.add("experience-col")
 
@@ -337,3 +342,138 @@ function showModalInfo(e: Event) {
     closeButton.addEventListener("click", () => infoModal.classList.add("is-hidden"))
     infoModal.classList.remove("is-hidden")
 }
+
+addWorkerTozoneButtons.forEach(addButton => {
+    addButton.addEventListener("click", () => {
+        showAnassignedToAssignModal?.classList.remove("is-hidden")
+        const closeButton = showAnassignedToAssignModal?.querySelector<HTMLButtonElement>("button")
+
+        if (closeButton) closeButton.addEventListener("click", () => showAnassignedToAssignModal?.classList.add("is-hidden"))
+
+        const list = showAnassignedToAssignModal?.querySelector<HTMLUListElement>("ul")
+        if (!list) return
+
+        list.innerHTML = ""
+
+        allWorkersPlace["unassigned"].forEach(w => {
+            const li = document.createElement("li")
+            li.onclick = AssignWorkerToRoom.bind(null, w.role, w.id, addButton.dataset.room as roomType)
+            li.innerHTML = `
+                    <div class="image">
+                        <img src="${w.image}" alt="${w.name}-avatar-${w.id}" />
+                    </div>
+                    <div class="name-role">
+                        <p>${w.name.split(" ")[0]}</p>
+                        <p>${w.role}</p>
+                    </div>
+            `
+            list.appendChild(li)
+        })
+    })
+})
+
+function AssignWorkerToRoom(role: keyof allWorkersPlaceType, id: number, room: roomType) {
+    const roomTarget = document.querySelector(`div[data-room=${room}]`)
+    const listofWorkers = roomTarget?.querySelector("ul")
+    if (!listofWorkers) return
+    let shouldGo = false
+
+    zones[room].forEach(z => {
+        if (z === role) shouldGo = true
+    })
+    if (!shouldGo) {
+        showToaster(true, `${role} can't go there`)
+        showAnassignedToAssignModal?.classList.add("is-hidden")
+        return
+    }
+    const [foundWorker] = allWorkersPlace["unassigned"].filter(w => w.id === Number(id))
+    allWorkersPlace["unassigned"] = allWorkersPlace["unassigned"].filter(w => w.id !== Number(id))
+    allWorkersPlace[room] = [...allWorkersPlace[room], foundWorker]
+    localStorage.setItem("allWorkersPlace", JSON.stringify(allWorkersPlace))
+    renderAllWorkersInsideRooms()
+    renderUnassignedWorkers()
+    scanRoomState()
+    showAnassignedToAssignModal?.classList.add("is-hidden")
+}
+
+function renderAllWorkersInsideRooms() {
+    const allRooms = document.querySelectorAll<HTMLDivElement>("div[data-room]")
+    allRooms.forEach(room => {
+        const list = room.querySelector("ul")
+        if (!list) return
+        list.style.listStyle = "none"
+        list.innerHTML = ""
+
+        const key = room.dataset.room as roomType
+
+        allWorkersPlace[key].forEach(w => {
+            console.log(w, room.dataset.room)
+            const worker = document.createElement("li")
+            const button = document.createElement("button")
+
+            button.classList.add("delete")
+            button.style.cursor = "pointer"
+            button.textContent = "x"
+            button.onclick = removeWorkerFromRoom.bind(null, w.id, key)
+            button.role = "delete"
+
+            worker.onclick = showModalInfo
+            worker.classList.add("employee")
+            worker.draggable = true
+            worker.id = w.id.toString()
+            worker.setAttribute("data-place", key)
+            worker.innerHTML = `
+                        <div class="avatar">
+                            <img src="${w.image}" alt="avatar" />
+                        </div>
+                        <div class="employee-name">
+                            <p>${w.name.split(" ")[0]}</p>
+                            <p>${w.role}</p>
+                        </div>
+            `
+            worker.appendChild(button)
+            list.appendChild(worker)
+        })
+    })
+}
+
+function removeWorkerFromRoom(id: number, room: roomType) {
+    const [foundWorker] = allWorkersPlace[room].filter(w => w.id === Number(id))
+    allWorkersPlace["unassigned"] = [...allWorkersPlace["unassigned"], foundWorker]
+    allWorkersPlace[room] = allWorkersPlace[room].filter(w => w.id !== Number(id))
+    localStorage.setItem("allWorkersPlace", JSON.stringify(allWorkersPlace))
+    renderUnassignedWorkers()
+    renderAllWorkersInsideRooms()
+    scanRoomState()
+}
+
+function showToaster(bad: boolean, msg: string = "") {
+    const toaster = bad ? document.querySelector(".toast.danger") : document.querySelector(".toast.good")
+    if (!toaster) return
+    
+    if (msg) toaster.querySelector("p")!.textContent = msg
+    
+    toaster.classList.add("is-hidden")
+    toaster.classList.remove("is-hidden")
+    setTimeout(() => toaster.classList.add("is-hidden"), 3000);
+}
+
+function scanRoomState() {
+    const rooms = document.querySelectorAll<HTMLDivElement>("div[data-room")
+    if (!rooms) return
+    rooms.forEach(room => {
+        const key = room.dataset.room as roomType
+        if(key !== "servers" && key !== 'security' && key !== "reception") room.classList.toggle('room', allWorkersPlace[key].length === 0)
+    })
+    
+}
+
+
+// function that calls functions that need to be called directly on the root
+function AppCaller() {
+    renderUnassignedWorkers()
+    renderAllWorkersInsideRooms()
+    targetExperiences();
+    scanRoomState()
+}
+AppCaller()
