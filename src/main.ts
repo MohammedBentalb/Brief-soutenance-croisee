@@ -1,4 +1,4 @@
-import type { allWorkersPlaceType, experienceType, roomType, workerType, zonesType } from "./types";
+import type { allWorkersPlaceType, experienceType, roomType, zonesType } from "./types";
 import { searchAndFilterUnassigned } from "./utils/searchandFilter";
 import { showToaster } from "./utils/toaster";
 import { handleDatesInputInfShowErrorAndValidation, handleExperienceShowinfErrorAndValidation, handleInputShowinfErrorAndValidation } from "./utils/validation";
