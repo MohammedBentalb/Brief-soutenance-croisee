@@ -43,7 +43,7 @@ let experienceErrorArray: string[] | [] = [];
 let experienceFieldsCount = 1;
 
 // workersList
-let allWorkersPlace: allWorkersPlaceType = JSON.parse(localStorage.getItem("allWorkersPlace") || "null") || {
+const allWorkersPlace: allWorkersPlaceType = JSON.parse(localStorage.getItem("allWorkersPlace") || "null") || {
     unassigned: [],
     servers: [],
     staff: [],
@@ -54,7 +54,7 @@ let allWorkersPlace: allWorkersPlaceType = JSON.parse(localStorage.getItem("allW
 }
 let workersCount = JSON.parse(localStorage.getItem("workersCount") || "null") || 0
 
-let zones: zonesType = {
+const zones: zonesType = {
     conference: ["reception", "it", "security", "manager", "nettoyage", "other"],
     reception: ["reception", "manager"],
     servers: ["it", "manager"],
@@ -62,6 +62,16 @@ let zones: zonesType = {
     staff: ["reception", "it", "security", "manager", "nettoyage", "other"],
     vault: ["reception", "it", "security", "manager", "other"],
 }
+const zonesLimits = {
+    conference: 6,
+    reception: 8,
+    servers: 4,
+    security: 4,
+    staff: 4,
+    vault: 4,
+}
+
+Object.freeze(zonesLimits)
 
 console.log("these are my workers", allWorkersPlace)
 
@@ -130,7 +140,6 @@ addExperienceButton?.addEventListener("click", () => {
                 <p class="error-end-date-ex"></p>
             </div>
     `;
-
 
     experienceFieldsCount++;
     experienceContainer?.appendChild(div);
@@ -385,16 +394,27 @@ addWorkerTozoneButtons.forEach(addButton => {
 function AssignWorkerToRoom(role: keyof allWorkersPlaceType, id: number, room: roomType) {
     const roomTarget = document.querySelector(`div[data-room=${room}]`)
     const listofWorkers = roomTarget?.querySelector("ul")
+    
     if (!listofWorkers) return
+    
     let shouldGo = false
+    let reachedLimit = false
 
     zones[room].forEach(z => { if (z === role) shouldGo = true })
+    reachedLimit = allWorkersPlace[room].length === zonesLimits[room]
 
     if (!shouldGo) {
         showToaster(true, `${role} can't go there`)
         showAnassignedToAssignModal?.classList.add("is-hidden")
         return
     }
+    
+    if (reachedLimit) {
+        showToaster(true, `${room} has reached the limit`)
+        showAnassignedToAssignModal?.classList.add("is-hidden")
+        return
+    }
+
     const [foundWorker] = allWorkersPlace["unassigned"].filter(w => w.id === Number(id))
     allWorkersPlace["unassigned"] = allWorkersPlace["unassigned"].filter(w => w.id !== Number(id))
     allWorkersPlace[room] = [...allWorkersPlace[room], foundWorker]
@@ -479,12 +499,19 @@ rooms.forEach(roomZone => {
         const roomKey = roomZone.dataset.room as roomType
 
         let replace = false
+        let reachedLimit = false
 
         if (place === roomKey) return
         zones[roomKey].forEach(z => { if (z === role) replace = true })
+        reachedLimit = allWorkersPlace[roomKey].length === zonesLimits[roomKey]
 
         if (!replace) {
             showToaster(true, `${role} can't go there`)
+            return
+        }
+        
+        if (reachedLimit) {
+            showToaster(true, `${roomKey} has reached the limit`)
             return
         }
 

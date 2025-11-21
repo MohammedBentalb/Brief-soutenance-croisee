@@ -36,4 +36,13 @@ export type zonesType = {
     vault: ["reception", "it", "security", "manager", "other"],
 }
 
+export type zonesLimits = {
+    conference: number,
+    reception: number,
+    servers: number,
+    security: number,
+    staff: number,
+    vault: number,
+}
+
 export type roomType = keyof zonesType
