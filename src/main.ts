@@ -47,7 +47,7 @@ const filterInput = document.querySelector<HTMLSelectElement>(".filter-inp")
 let experienceErrorArray: string[] | [] = [];
 let experienceFieldsCount = 1;
 
-// workersList
+// object that contains all the places available along with woorkes on each one MAIN OBJECT
 const allWorkersPlace: allWorkersPlaceType = JSON.parse(localStorage.getItem("allWorkersPlace") || "null") || {
     unassigned: [],
     servers: [],
@@ -57,8 +57,10 @@ const allWorkersPlace: allWorkersPlaceType = JSON.parse(localStorage.getItem("al
     vault: [],
     reception: [],
 }
+// variable used as an id, to ensure we never use and old id
 let workersCount = JSON.parse(localStorage.getItem("workersCount") || "null") || 0
 
+// object that containes the rooms available along with allowed rooles to enter them for easy access
 const zones: zonesType = {
     conference: ["reception", "it", "security", "manager", "nettoyage", "other"],
     reception: ["reception", "manager"],
@@ -67,6 +69,8 @@ const zones: zonesType = {
     staff: ["reception", "it", "security", "manager", "nettoyage", "other"],
     vault: ["reception", "it", "security", "manager", "other"],
 }
+
+// object containing rooms along with the limit number of workes that can be in there
 const zonesLimits = {
     conference: 6,
     reception: 8,
@@ -76,9 +80,14 @@ const zonesLimits = {
     vault: 4,
 }
 
+// freesnig the limits zoon to ensure we do not change it by mistake in futurr
 Object.freeze(zonesLimits)
 
 console.log("these are my workers", allWorkersPlace)
+
+// adding eventlistnner to search and filter inputs on side bar 
+searchInput?.addEventListener("input", renderUnassignedWorkers)
+filterInput?.addEventListener("change", renderUnassignedWorkers)
 
 // show add formula when clicking on the add worker button on the sidebar
 addWorkerButoon?.addEventListener("click", () => formModal?.classList.remove("is-hidden"));
@@ -150,7 +159,11 @@ addExperienceButton?.addEventListener("click", () => {
     experienceContainer?.appendChild(div);
     targetExperiences();
 });
-// function that runs cheks on the experience feilds since they require a seperate logic to handle all experiences validation at the same time
+
+/**
+ *function that runs cheks on the experience feilds since they require a seperate logic to handle all experiences validation at the same time
+ * @returns
+ */
 function targetExperiences() {
     const experiences = document.querySelectorAll(".experience-field");
     experiences.forEach((experience) => {
@@ -202,6 +215,7 @@ function targetExperiences() {
         });
     });
 }
+
 // listnner to the submit event that happens to the form, we check again if the inputs got all the details we need and then we proced with the submitting event
 addEditForm?.addEventListener("submit", function (e) {
     e.preventDefault();
@@ -284,11 +298,15 @@ addEditForm?.addEventListener("submit", function (e) {
     renderUnassignedWorkers()
 });
 
+/**
+ * function that renders the unassined workers to the side bar
+ * @returns 
+ */
 function renderUnassignedWorkers() {
     if (!unassignedList) return
     const workersArray = searchAndFilterUnassigned(allWorkersPlace["unassigned"], filterInput, searchInput)
     unassignedList.innerHTML = ""
-    
+
     workersArray.forEach(w => {
         const li = document.createElement("li")
         li.draggable = true
@@ -310,6 +328,11 @@ function renderUnassignedWorkers() {
     })
 }
 
+/**
+ * show modal of a worker with an event by with we can locate where he is and who is he
+ * @param e 
+ * @returns 
+ */
 function showModalInfo(e: Event) {
     console.log(infoModal)
     if (!infoModal) return
@@ -338,7 +361,7 @@ function showModalInfo(e: Event) {
             <div class="personal-info">
             <p class="info-line"><span>Email:</span> ${foundWorker.email}</p>
             <p class="info-line"><span>Phone:</span> ${foundWorker.phone}</p>
-            <p class="info-line"><span>current location:</span> servers room</p>
+            <p class="info-line"><span>current location:</span> ${card.dataset.place} room</p>
             </div>
             
             <h3>work experience</h3>
@@ -369,6 +392,7 @@ function showModalInfo(e: Event) {
     infoModal.classList.remove("is-hidden")
 }
 
+// listenning to the + buttons on each zone to show a modal with suggested workers to add
 addWorkerTozoneButtons.forEach(addButton => {
     addButton.addEventListener("click", () => {
         showAnassignedToAssignModal?.classList.remove("is-hidden")
@@ -398,6 +422,13 @@ addWorkerTozoneButtons.forEach(addButton => {
     })
 })
 
+/**
+ * function that takes care of changin the location of a worker, from a room to an other
+ * @param role 
+ * @param id 
+ * @param room 
+ * @returns 
+ */
 function AssignWorkerToRoom(role: keyof allWorkersPlaceType, id: number, room: roomType) {
     const roomTarget = document.querySelector(`div[data-room=${room}]`)
     const listofWorkers = roomTarget?.querySelector("ul")
@@ -433,6 +464,10 @@ function AssignWorkerToRoom(role: keyof allWorkersPlaceType, id: number, room: r
     showAnassignedToAssignModal?.classList.add("is-hidden")
 }
 
+/**
+ * function that renders all workers inside each room
+ * @return
+ */
 function renderAllWorkersInsideRooms() {
     const allRooms = document.querySelectorAll<HTMLDivElement>("div[data-room]")
     allRooms.forEach(room => {
@@ -475,6 +510,11 @@ function renderAllWorkersInsideRooms() {
     })
 }
 
+/**
+ * function that hdnles the remove action of a worker from a room and taking him back to unassigned
+ * @param id 
+ * @param room 
+ */
 function removeWorkerFromRoom(id: number, room: roomType) {
     console.log(id)
     console.log(room)
@@ -487,6 +527,10 @@ function removeWorkerFromRoom(id: number, room: roomType) {
     scanRoomState()
 }
 
+/**
+ * function that scans room and turns those which are obligatory to red
+ * @returns 
+ */
 function scanRoomState() {
     if (!rooms) return
     rooms.forEach(room => {
@@ -495,6 +539,7 @@ function scanRoomState() {
     })
 }
 
+// function that traks rooms and listen to the drop event on them, then handling worker transition, from a room to an other
 rooms.forEach(roomZone => {
     roomZone.addEventListener("dragover", (e) => e.preventDefault())
 
@@ -534,6 +579,11 @@ rooms.forEach(roomZone => {
     })
 })
 
+/**
+ * function that adds a dragstart event to each item passed to it (workers)
+ * @param card 
+ * @returns 
+ */
 function dragEventStart(card: HTMLLIElement) {
     if (!card) return
     card.addEventListener("dragstart", e => {
@@ -547,19 +597,15 @@ function dragEventStart(card: HTMLLIElement) {
     })
 }
 
-// function that calls functions that need to be called directly on the root
+/**
+ * function that calls functions that need to be called directly on the root
+ * @returns
+ */
 function AppCaller() {
     renderUnassignedWorkers()
     renderAllWorkersInsideRooms()
     targetExperiences();
     scanRoomState()
 }
+
 AppCaller()
-
-
-console.log(searchInput)
-console.log(filterInput)
-
-searchInput?.addEventListener("input", renderUnassignedWorkers)
-filterInput?.addEventListener("change", renderUnassignedWorkers)
-

@@ -1,3 +1,10 @@
+/**
+ * function that toggles a modle in order to show success or error alert
+ * @param bad 
+ * @param msg 
+ * @returns 
+ */
+
 export function showToaster(bad: boolean, msg: string = "") {
     const toaster = bad ? document.querySelector(".toast.danger") : document.querySelector(".toast.good")
     if (!toaster) return

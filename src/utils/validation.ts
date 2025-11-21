@@ -1,5 +1,9 @@
 import type { validatingInputValueType } from "../types";
-
+/**
+ * funrtion that validates the input depengin of it's type, and return a string with error message if an error found, or an emty string if value is correct
+ * @param element 
+ * @returns string || ""
+ */
 export const validatingInputValue = (element: validatingInputValueType): string => {
   if (!element.value.trim()) return "Invalid Value";
 
@@ -24,6 +28,11 @@ export const validatingInputValue = (element: validatingInputValueType): string 
   return "";
 };
 
+/**
+ * function that consumes a message and showes an error if the message is not an emty string
+ * @param errorField 
+ * @param mssg 
+ */
 export const showError = (errorField: HTMLParagraphElement, mssg: string) => {
   const input = errorField.previousElementSibling as | HTMLInputElement| HTMLSelectElement;
   errorField.textContent = mssg;
@@ -36,6 +45,12 @@ export const showError = (errorField: HTMLParagraphElement, mssg: string) => {
   }
 };
 
+/**
+ * function that validates the dates provided and return an array of string that could be empty string to show or hide an error
+ * @param dateInp1 
+ * @param dateInp2 
+ * @returns [string || "", string || ""]
+ */
 export function validatingDates(dateInp1: HTMLDataElement, dateInp2: HTMLDataElement): string[] {
   let date1Error = "", date2Error = "";
 
@@ -63,6 +78,13 @@ export function validatingDates(dateInp1: HTMLDataElement, dateInp2: HTMLDataEle
   return [date1Error, date2Error];
 }
 
+/**
+ * function that add a name of input to it's error array
+ * @param word 
+ * @param input 
+ * @param errorArray 
+ * @returns 
+ */
 export function AddToExperienceErrorArray(
   word: string, input: validatingInputValueType, errorArray: string[] | []) {
   let newArr = [...errorArray];
@@ -73,6 +95,13 @@ export function AddToExperienceErrorArray(
   return newArr = newArr.includes(input.id as never) ? newArr.filter((s) => s !== input.id) : newArr;
 }
 
+/**
+ * function that handles the validation and showing errors for experiences at the same time by using `validatingInputValue()` and `showError()`
+ * @param input 
+ * @param errorField 
+ * @param ErrorArr 
+ * @returns { valid, errorArray}
+ */
 export function handleExperienceShowinfErrorAndValidation(input: validatingInputValueType, errorField: HTMLParagraphElement, ErrorArr: string[] | []) {
   let newErrorArray = [...ErrorArr];
 
@@ -83,6 +112,12 @@ export function handleExperienceShowinfErrorAndValidation(input: validatingInput
   return { valid: validationResult !== "", errorArray: newErrorArray };
 }
 
+/**
+ * function that handles the validation and showing errors for regulat inputs at the same time by using `validatingInputValue()` and `showError()`
+ * @param input 
+ * @param errorField 
+ * @returns 
+ */
 export function handleInputShowinfErrorAndValidation(input: validatingInputValueType, errorField: HTMLParagraphElement) {
   const validationResult = validatingInputValue(input);
   showError(errorField, validationResult);
@@ -90,6 +125,15 @@ export function handleInputShowinfErrorAndValidation(input: validatingInputValue
   return validationResult !== "";
 }
 
+/**
+ * function that uses `validatingDates()` to validate and whor error if date is invalid according to the defined rules
+ * @param firstDate 
+ * @param secondDate 
+ * @param errorField1 
+ * @param errorField2 
+ * @param errorsArray 
+ * @returns 
+ */
 export function handleDatesInputInfShowErrorAndValidation(firstDate: HTMLInputElement, secondDate: HTMLInputElement, errorField1: HTMLParagraphElement, errorField2: HTMLParagraphElement, errorsArray: string[] | []) {
   let newErrorArray = [...errorsArray]
   const [result1, result2] = validatingDates(firstDate, secondDate);
