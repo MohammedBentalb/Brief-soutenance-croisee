@@ -34,6 +34,7 @@ body {
   width: 100%;
   justify-content: space-between;
   min-height: 800px;
+  height: max-content;
   position: relative;
   padding: 1.5rem;
 }
@@ -50,7 +51,6 @@ body {
 }
 
 .left-office {
-  height: 100%;
   width: 38.7%;
   padding: 0.95%;
   display: flex;
@@ -82,7 +82,6 @@ body {
 
 .right-office {
   width: 46%;
-  height: 100%;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -299,9 +298,9 @@ body {
     height: unset;
   }
 
-  .right-office > div:last-child {
+  /* .right-office > div:last-child {
     height: fit-content;
-  }
+  } */
   .sidebar {
     max-width: unset;
     width: 100%;
