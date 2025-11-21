@@ -1,4 +1,5 @@
-import type { allWorkersPlaceType, experienceType, roomType, zonesType } from "./types";
+import type { allWorkersPlaceType, experienceType, roomType, workerType, zonesType } from "./types";
+import { searchAndFilterUnassigned } from "./utils/searchandFilter";
 import { showToaster } from "./utils/toaster";
 import { handleDatesInputInfShowErrorAndValidation, handleExperienceShowinfErrorAndValidation, handleInputShowinfErrorAndValidation } from "./utils/validation";
 
@@ -37,6 +38,10 @@ const addWorkerTozoneButtons = document.querySelectorAll<HTMLButtonElement>('.ro
 const showAnassignedToAssignModal = document.querySelector<HTMLDivElement>(".unassigned-list-container")
 // rooms
 const rooms = document.querySelectorAll<HTMLDivElement>("div[data-room")
+
+// search and filter inputs
+const searchInput = document.querySelector<HTMLInputElement>(".search-inp")
+const filterInput = document.querySelector<HTMLSelectElement>(".filter-inp")
 
 
 let experienceErrorArray: string[] | [] = [];
@@ -272,17 +277,19 @@ addEditForm?.addEventListener("submit", function (e) {
 
     experienceFieldsCount = 1
     if (experienceContainer) experienceContainer.innerHTML = ""
-    if(avatarImage) avatarImage.src = "/assets/avatar.png"
+    if (avatarImage) avatarImage.src = "/assets/avatar.png"
     addEditForm.reset()
     formModal?.classList.add("is-hidden")
-    
+
     renderUnassignedWorkers()
 });
 
 function renderUnassignedWorkers() {
     if (!unassignedList) return
+    const workersArray = searchAndFilterUnassigned(allWorkersPlace["unassigned"], filterInput, searchInput)
     unassignedList.innerHTML = ""
-    allWorkersPlace["unassigned"].forEach(w => {
+    
+    workersArray.forEach(w => {
         const li = document.createElement("li")
         li.draggable = true
         li.id = w.id.toString()
@@ -394,9 +401,9 @@ addWorkerTozoneButtons.forEach(addButton => {
 function AssignWorkerToRoom(role: keyof allWorkersPlaceType, id: number, room: roomType) {
     const roomTarget = document.querySelector(`div[data-room=${room}]`)
     const listofWorkers = roomTarget?.querySelector("ul")
-    
+
     if (!listofWorkers) return
-    
+
     let shouldGo = false
     let reachedLimit = false
 
@@ -408,7 +415,7 @@ function AssignWorkerToRoom(role: keyof allWorkersPlaceType, id: number, room: r
         showAnassignedToAssignModal?.classList.add("is-hidden")
         return
     }
-    
+
     if (reachedLimit) {
         showToaster(true, `${room} has reached the limit`)
         showAnassignedToAssignModal?.classList.add("is-hidden")
@@ -509,7 +516,7 @@ rooms.forEach(roomZone => {
             showToaster(true, `${role} can't go there`)
             return
         }
-        
+
         if (reachedLimit) {
             showToaster(true, `${roomKey} has reached the limit`)
             return
@@ -550,4 +557,9 @@ function AppCaller() {
 AppCaller()
 
 
-/// limit the zones to spesic number of workers 
+console.log(searchInput)
+console.log(filterInput)
+
+searchInput?.addEventListener("input", renderUnassignedWorkers)
+filterInput?.addEventListener("change", renderUnassignedWorkers)
+

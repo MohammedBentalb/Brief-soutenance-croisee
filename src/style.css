@@ -706,3 +706,31 @@ hr {
   transition: color 0.1s linear, background 0.1s linear;
   cursor: pointer;
 }
+
+.search-filter-inp{
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  gap: .5rem;
+  padding-block: 1rem;
+}
+.search-filter-inp input, .search-filter-inp select{
+  width: 100%;
+  height: 35px;
+  padding-inline: .5rem;
+  font-weight: 500;
+
+  border: 2px solid gray;
+  border-radius: 8px;
+}
+.search-filter-inp select{
+  text-transform: capitalize;
+}
+
+@media screen and (max-width: 920px) {
+  .search-filter-inp{
+    max-width: 250px;
+    flex-direction: column;
+    margin: auto;
+  }
+}

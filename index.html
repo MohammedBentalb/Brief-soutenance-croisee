@@ -11,7 +11,19 @@
     <main class="main">
       <div class="sidebar" id="employee-sidebar">
         <h1 class="sidebar-title">Staff members (unassigned)</h1>
-        <div></div>
+        <div class="search-filter-inp">
+          <input type="text" placeholder="search by name" class="search-inp">
+          <select class="filter-inp">
+            <option value="" disabled selected>filter by role</option>
+            <option value="all">all</option>
+            <option value="it">it</option>
+            <option value="reception">Reception</option>
+            <option value="security">security</option>
+            <option value="manager">Manager</option>
+            <option value="nettoyage">Nettoyage</option>
+            <option value="other">other</option>
+          </select>
+        </div>
         <ul class="unassigned-list">
 
         </ul>
