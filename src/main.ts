@@ -1,4 +1,4 @@
-import type { allWorkersPlaceType, experienceType, roomType, zonesType } from "./types";
+import type { allWorkersPlaceType, experienceType, RoleType, roomType, workerType, zonesType } from "./types";
 import { searchAndFilterUnassigned } from "./utils/searchandFilter";
 import { showToaster } from "./utils/toaster";
 import { handleDatesInputInfShowErrorAndValidation, handleExperienceShowinfErrorAndValidation, handleInputShowinfErrorAndValidation } from "./utils/validation";
@@ -6,6 +6,7 @@ import { handleDatesInputInfShowErrorAndValidation, handleExperienceShowinfError
 const addWorkerButoon = document.querySelector<HTMLButtonElement>(".add-worker");
 const hideFormModal = document.querySelector<HTMLButtonElement>(".cancel-add-edit");
 const formModal = document.querySelector<HTMLDivElement>(".form-modal");
+const submitButton = document.querySelector(".add-edit-worker")
 
 // formInputs & errors
 const nameInput = document.querySelector<HTMLInputElement>("#name-input");
@@ -80,6 +81,10 @@ const zonesLimits = {
     vault: 4,
 }
 
+// the worker needed too be edited
+let foundEditWorker: workerType | null = null
+
+
 // freesnig the limits zoon to ensure we do not change it by mistake in futurr
 Object.freeze(zonesLimits)
 
@@ -90,7 +95,10 @@ searchInput?.addEventListener("input", renderUnassignedWorkers)
 filterInput?.addEventListener("change", renderUnassignedWorkers)
 
 // show add formula when clicking on the add worker button on the sidebar
-addWorkerButoon?.addEventListener("click", () => formModal?.classList.remove("is-hidden"));
+addWorkerButoon?.addEventListener("click", () =>{ 
+    if (submitButton) submitButton.textContent = "add worker"
+    formModal?.classList.remove("is-hidden")}
+);
 
 // show add formula when clicking on the add worker button on the sidebar
 hideFormModal?.addEventListener("click", () => {
@@ -132,7 +140,10 @@ phoneInput?.addEventListener("input", () => {
     handleInputShowinfErrorAndValidation(phoneInput, phoneError);
 });
 
-addExperienceButton?.addEventListener("click", () => {
+addExperienceButton?.addEventListener("click", AddMoreExperience);
+
+
+function AddMoreExperience(){
     const div = document.createElement("div");
     div.classList.add("filed-container", "experience-field");
     div.innerHTML = `
@@ -164,7 +175,7 @@ addExperienceButton?.addEventListener("click", () => {
     experienceFieldsCount++;
     experienceContainer?.appendChild(div);
     targetExperiences();
-});
+}
 
 /**
  *function that runs cheks on the experience feilds since they require a seperate logic to handle all experiences validation at the same time
@@ -282,16 +293,21 @@ addEditForm?.addEventListener("submit", function (e) {
     if (experienceCompanyValidation || experienceRoleValidation || startingDateValidation || endDateValidationn) return;
 
     let worker = {
-        id: workersCount++,
+        id: foundEditWorker ? foundEditWorker.id  : workersCount++,
         name: nameInput.value.trim(),
         email: emailInput.value.trim(),
         phone: Number(phoneInput.value.trim()),
         image: imageInput.value.trim() === "" ? "/assets/avatar.png" : imageInput.value.trim(),
-        role: roleInput.value.trim() as keyof allWorkersPlaceType,
+        role: roleInput.value.trim() as RoleType,
         experiences: experienceArray
     };
 
-    allWorkersPlace["unassigned"] = [...allWorkersPlace["unassigned"], worker]
+    if(!foundEditWorker){
+        allWorkersPlace["unassigned"] = [...allWorkersPlace["unassigned"], worker]
+    } else{
+        allWorkersPlace["unassigned"] = [...allWorkersPlace["unassigned"].filter(w => w.id !== foundEditWorker?.id), worker]
+    }
+
     localStorage.setItem("allWorkersPlace", JSON.stringify(allWorkersPlace))
     localStorage.setItem("workersCount", JSON.stringify(workersCount))
 
@@ -327,10 +343,48 @@ function renderUnassignedWorkers() {
               <p>${w.name.split(" ")[0]}</p>
               <p>${w.role}</p>
             </div>
-            <button class="edite" id="worker-${w.id}" >edit</button>
+            <button class="edite" data-action="edit" id="worker-${w.id}" >edit</button>
          `
         unassignedList.appendChild(li)
         dragEventStart(li)
+    })
+    trackEditButton()
+}
+
+function trackEditButton(){
+    const EditButtons = document.querySelectorAll(".edite")
+    EditButtons.forEach(btn => {
+        btn.addEventListener("click", (e) => {
+            [foundEditWorker] = allWorkersPlace["unassigned"].filter(w => w.id === Number((e.currentTarget as HTMLButtonElement).id.split("-")[1]))   
+            
+            if (!nameInput || !roleInput || !emailInput || !phoneInput || !foundEditWorker) return
+
+            nameInput.value = foundEditWorker.name
+            roleInput.value = foundEditWorker.role
+            emailInput.value = foundEditWorker.email
+            phoneInput.value = foundEditWorker.phone.toString()
+
+            foundEditWorker.experiences.forEach((_,i) => {
+                if(i > 0) AddMoreExperience()
+            })
+            const experiencesArr = document.querySelectorAll(".experience-field");
+            experiencesArr.forEach((ex, i) => {
+                const experienceCompanyInput = ex.querySelector<HTMLInputElement>(".exp-company-input");
+                const experienceRoleInput = ex.querySelector<HTMLInputElement>(".exp-role-input");
+                const experienceStartInput = ex.querySelector<HTMLInputElement>(".exp-start-date");
+                const experienceEndInput = ex.querySelector<HTMLInputElement>(".exp-end-date");
+            
+                if (!experienceCompanyInput || !experienceRoleInput || !experienceStartInput || !experienceEndInput || !foundEditWorker) return
+
+                experienceCompanyInput.value = foundEditWorker.experiences[i].company
+                experienceRoleInput.value = foundEditWorker.experiences[i].role
+                experienceStartInput.value = foundEditWorker.experiences[i].start
+                experienceEndInput.value = foundEditWorker.experiences[i].end
+            })
+
+            if (submitButton) submitButton.textContent = "edit worker"
+            formModal?.classList.remove("is-hidden")
+        })
     })
 }
 
@@ -340,15 +394,13 @@ function renderUnassignedWorkers() {
  * @returns 
  */
 function showModalInfo(e: Event) {
-    console.log(infoModal)
     if (!infoModal) return
     infoModal.innerHTML = ""
-    if ((e.target as HTMLButtonElement).role === "delete") return
+    if ((e.target as HTMLButtonElement).role === "delete" || (e.target as HTMLButtonElement).dataset.action === "edit") return
 
     const card = e.currentTarget as HTMLLIElement
     const [foundWorker] = allWorkersPlace[card.dataset.place as roomType].filter(w => w.id === Number(card.id))
 
-    console.log(foundWorker)
     const personalDetails = document.createElement("div")
     personalDetails.classList.add("info-modal-container")
     personalDetails.innerHTML = `
