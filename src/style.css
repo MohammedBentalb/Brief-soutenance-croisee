@@ -8,7 +8,6 @@
 
 body {
   background-color: #f3f7fa;
-  position: relative;
 }
 
 .main {
@@ -324,8 +323,7 @@ body {
   background-color: rgba(0, 0, 0, 0.384);
   backdrop-filter: blur(5px);
   position: absolute;
-  inset-inline: 0;
-  top: 0;
+  inset: 0;
   padding-block: 4rem;
   padding-inline: 1rem;
   min-height: max-content;
