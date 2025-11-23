@@ -5,7 +5,7 @@ import type { validatingInputValueType } from "../types";
  * @returns string || ""
  */
 export const validatingInputValue = (element: validatingInputValueType): string => {
-  if (!element.value.trim()) return "Invalid Value";
+  if (!element.value.trim() && element.id !== "image-input") return "can't be empty";
 
   if (element.type == "email") {
     let emailRegex = /^[A-Za-z0-9._%+-]+@[A-Za-z0-9](?:[A-Za-z0-9-]{0,61}[A-Za-z0-9])?(?:\.[A-Za-z0-9](?:[A-Za-z0-9-]{0,61}[A-Za-z0-9])?)+$/
@@ -20,6 +20,8 @@ export const validatingInputValue = (element: validatingInputValueType): string 
   }
 
   if (element.id == "image-input") {
+    if(element.value.trim() === "") return ""
+
     const imageRegex = /^https?:\/\/(?:[A-Za-z0-9](?:[A-Za-z0-9-]{0,61}[A-Za-z0-9])?\.)+[A-Za-z]{2,63}(?::\d{1,5})?(?:\/[^\s]*)?$/
     if (!imageRegex.test(element.value.trim())) return "invalid URL";
     return "";

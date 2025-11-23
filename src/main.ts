@@ -1,4 +1,4 @@
-import type { allWorkersPlaceType, experienceType, roomType, workerType, zonesType } from "./types";
+import type { allWorkersPlaceType, experienceType, roomType, zonesType } from "./types";
 import { searchAndFilterUnassigned } from "./utils/searchandFilter";
 import { showToaster } from "./utils/toaster";
 import { handleDatesInputInfShowErrorAndValidation, handleExperienceShowinfErrorAndValidation, handleInputShowinfErrorAndValidation } from "./utils/validation";
@@ -93,7 +93,13 @@ filterInput?.addEventListener("change", renderUnassignedWorkers)
 addWorkerButoon?.addEventListener("click", () => formModal?.classList.remove("is-hidden"));
 
 // show add formula when clicking on the add worker button on the sidebar
-hideFormModal?.addEventListener("click", () => formModal?.classList.add("is-hidden"));
+hideFormModal?.addEventListener("click", () => {
+    experienceFieldsCount = 1
+    if (experienceContainer) experienceContainer.innerHTML = ""
+    if (avatarImage) avatarImage.src = "/assets/avatar.png"
+    addEditForm?.reset()
+    formModal?.classList.add("is-hidden")
+});
 
 // validating the worker name in realtime
 nameInput?.addEventListener("input", () => {
@@ -111,7 +117,7 @@ roleInput?.addEventListener("input", () => {
 imageInput?.addEventListener("input", () => {
     if (!imageError) return;
     const validationResult = handleInputShowinfErrorAndValidation(imageInput, imageError);
-    if (!validationResult && avatarImage) avatarImage.src = imageInput?.value.trim() as string
+    if (!validationResult && avatarImage) avatarImage.src = imageInput?.value.trim() === "" ? "/assets/avatar.png" : imageInput?.value.trim()
 });
 
 // validating the worker email in realtime
@@ -280,7 +286,7 @@ addEditForm?.addEventListener("submit", function (e) {
         name: nameInput.value.trim(),
         email: emailInput.value.trim(),
         phone: Number(phoneInput.value.trim()),
-        image: imageInput.value.trim(),
+        image: imageInput.value.trim() === "" ? "/assets/avatar.png" : imageInput.value.trim(),
         role: roleInput.value.trim() as keyof allWorkersPlaceType,
         experiences: experienceArray
     };
