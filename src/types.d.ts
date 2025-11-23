@@ -10,7 +10,7 @@ export type experienceType = {
 export type workerType = {
     id: number,
     name: string,
-    role: RoleType,
+    role: keyof allWorkersPlaceType,
     image: string,
     email: string,
     phone: number,
@@ -44,8 +44,5 @@ export type zonesLimits = {
     staff: number,
     vault: number,
 }
-
-
-export type RoleType = "it" | "security" | "manager" | "nettoyage" | "other" | "reception"
 
 export type roomType = keyof zonesType

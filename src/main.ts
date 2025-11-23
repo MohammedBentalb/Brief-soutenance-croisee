@@ -1,4 +1,4 @@
-import type { allWorkersPlaceType, experienceType, RoleType, roomType, workerType, zonesType } from "./types";
+import type { allWorkersPlaceType, experienceType, roomType, workerType, zonesType } from "./types";
 import { searchAndFilterUnassigned } from "./utils/searchandFilter";
 import { showToaster } from "./utils/toaster";
 import { handleDatesInputInfShowErrorAndValidation, handleExperienceShowinfErrorAndValidation, handleInputShowinfErrorAndValidation } from "./utils/validation";
@@ -298,7 +298,7 @@ addEditForm?.addEventListener("submit", function (e) {
         email: emailInput.value.trim(),
         phone: Number(phoneInput.value.trim()),
         image: imageInput.value.trim() === "" ? "/assets/avatar.png" : imageInput.value.trim(),
-        role: roleInput.value.trim() as RoleType,
+        role: roleInput.value.trim() as keyof allWorkersPlaceType,
         experiences: experienceArray
     };
 

@@ -15,7 +15,9 @@ export const validatingInputValue = (element: validatingInputValueType): string 
 
   if (element.id == "phone-input") {
     // test phone with regex
-    if (!isNaN(Number(element.value.trim())) && element.value.trim().length === 10) return "";
+    const phoneRegex = /^(?:05|06|07)\d{8}$/
+
+    if (!isNaN(Number(element.value.trim())) && element.value.trim().length === 10 && phoneRegex.test(element.value.trim())) return "";
     return "Invalid phone format";
   }
 
@@ -38,6 +40,7 @@ export const validatingInputValue = (element: validatingInputValueType): string 
 export const showError = (errorField: HTMLParagraphElement, mssg: string) => {
   const input = errorField.previousElementSibling as | HTMLInputElement| HTMLSelectElement;
   errorField.textContent = mssg;
+  if(!input) return
   input.style.outlineColor = "red";
   input.style.borderColor = "red";
 
