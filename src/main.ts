@@ -362,7 +362,7 @@ function trackEditButton(){
             nameInput.value = foundEditWorker.name
             roleInput.value = foundEditWorker.role
             emailInput.value = foundEditWorker.email
-            phoneInput.value = foundEditWorker.phone.toString()
+            phoneInput.value = `0${foundEditWorker.phone}`
 
             foundEditWorker.experiences.forEach((_,i) => {
                 if(i > 0) AddMoreExperience()
